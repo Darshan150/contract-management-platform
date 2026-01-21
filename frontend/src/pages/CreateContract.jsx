@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
-import { getBlueprints, createContract } from "../api.js";
+import { getBlueprints, createContract } from "../api";
 
 export default function CreateContract({ onDone }) {
   const [name, setName] = useState("");
-  const [blueprintId, setBlueprintId] = useState("");
   const [blueprints, setBlueprints] = useState([]);
+  const [blueprintId, setBlueprintId] = useState("");
 
   useEffect(() => {
-    getBlueprints().then(setBlueprints);
+    async function load() {
+      const data = await getBlueprints();
+      setBlueprints(data);
+    }
+    load();
   }, []);
 
-  async function submit() {
-    if (!name || !blueprintId) {
-      alert("All fields are required");
+  async function submit(e) {
+    e.preventDefault();
+
+    if (!blueprintId) {
+      alert("Please select a blueprint");
       return;
     }
 
@@ -26,44 +32,40 @@ export default function CreateContract({ onDone }) {
   }
 
   return (
-    <div className="container">
+    <form className="card" onSubmit={submit}>
       <h2>Create Contract</h2>
-      <p className="subtitle">
-        Create a contract instance from an existing blueprint.
-      </p>
 
       <label>Contract Name</label>
       <input
-        placeholder="Employment Agreement"
         value={name}
         onChange={e => setName(e.target.value)}
+        placeholder="Employment Agreement"
+        required
       />
 
-      <label style={{ marginTop: 16 }}>Blueprint</label>
+      <label>Blueprint</label>
       <select
         value={blueprintId}
         onChange={e => setBlueprintId(e.target.value)}
+        required
       >
         <option value="">Select blueprint</option>
-        {blueprints.map(b => (
-          <option key={b.id} value={b.id}>{b.name}</option>
+        {blueprints.map(bp => (
+          <option key={bp.id} value={bp.id}>
+            {bp.name}
+          </option>
         ))}
       </select>
 
-      <div style={{ marginTop: 20 }}>
-        <button className="primary" onClick={submit}>
+      <div style={{ marginTop: 12 }}>
+        <button className="primary" type="submit">
           Create Contract
         </button>
-        <button
-          className="secondary"
-          style={{ marginLeft: 8 }}
-          onClick={onDone}
-        >
+        <button type="button" onClick={onDone}>
           Cancel
         </button>
       </div>
-    </div>
+    </form>
   );
 }
-
 
