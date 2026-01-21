@@ -7,20 +7,16 @@ export default function CreateContract({ onDone }) {
   const [blueprintId, setBlueprintId] = useState("");
 
   useEffect(() => {
-    async function load() {
+    async function loadBlueprints() {
       const data = await getBlueprints();
+      console.log("Blueprints loaded:", data);
       setBlueprints(data);
     }
-    load();
+    loadBlueprints();
   }, []);
 
   async function submit(e) {
     e.preventDefault();
-
-    if (!blueprintId) {
-      alert("Please select a blueprint");
-      return;
-    }
 
     await createContract({
       name,
@@ -39,7 +35,6 @@ export default function CreateContract({ onDone }) {
       <input
         value={name}
         onChange={e => setName(e.target.value)}
-        placeholder="Employment Agreement"
         required
       />
 
@@ -58,7 +53,7 @@ export default function CreateContract({ onDone }) {
       </select>
 
       <div style={{ marginTop: 12 }}>
-        <button className="primary" type="submit">
+        <button type="submit" className="primary">
           Create Contract
         </button>
         <button type="button" onClick={onDone}>
