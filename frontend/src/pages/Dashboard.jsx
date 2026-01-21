@@ -21,11 +21,16 @@ export default function Dashboard() {
   }
 
   if (view === "create") {
-    return <CreateContract onDone={() => {
-      setView("list");
-      load();
-    }} />;
-  }
+  return (
+    <CreateContract
+      key={Date.now()}
+      onDone={() => {
+        setView("list");
+        load();
+      }}
+    />
+  );
+}
 
   return (
     <div className="container">
